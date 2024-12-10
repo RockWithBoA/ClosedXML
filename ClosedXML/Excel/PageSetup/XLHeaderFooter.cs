@@ -129,7 +129,7 @@ namespace ClosedXML.Excel
         internal void SetAsInitial()
         {
             _initialTexts = new Dictionary<XLHFOccurrence, string>();
-            foreach (var o in Enum.GetValues(typeof(XLHFOccurrence)).Cast<XLHFOccurrence>())
+            foreach (var o in Enum.GetValuesAsUnderlyingType(typeof(XLHFOccurrence)).Cast<XLHFOccurrence>())
             {
                 _initialTexts.Add(o, GetText(o));
             }

@@ -89,7 +89,8 @@ namespace ClosedXML.Excel.CalcEngine
                         m => patternReplacements.Value[m.Value].Item2);
                     pattern = $"^{pattern}$";
 
-                    return Regex.IsMatch(value.ToString(), pattern, RegexOptions.IgnoreCase);
+                    string? valueString = value.ToString();
+                    return null == valueString ? false : Regex.IsMatch(valueString, pattern, RegexOptions.IgnoreCase);
                 }
 
                 // straight string comparison

@@ -956,33 +956,35 @@ namespace ClosedXML.Excel.CalcEngine
             // the criteria to evaluate
             var criteria = p[1].Evaluate();
 
-            var rangeValues = rangeColumn.Cast<object>().ToList();
-            using var sumRangeEnumerator = sumRange.Cast<object>().GetEnumerator();
-
-            // compute total
-            var ce = new XLCalcEngine(CultureInfo.CurrentCulture);
             var tally = new Tally();
-            for (var i = 0; i < rangeValues.Count; i++)
+            var rangeValues = rangeColumn.Cast<object>().ToList();
+            using var sumRangeEnumerator = sumRange?.Cast<object>().GetEnumerator();
+            if (sumRangeEnumerator != null)
             {
-                // TODO: Replace this mess completely
-                var targetValue = rangeValues[i];
-                if (CalcEngineHelpers.ValueSatisfiesCriteria(targetValue, criteria, ce))
+                // compute total
+                var ce = new XLCalcEngine(CultureInfo.CurrentCulture);
+                for (var i = 0; i < rangeValues.Count; i++)
                 {
-                    if (!sumRangeEnumerator.MoveNext())
-                        break;
-                    var value = sumRangeEnumerator.Current!;
-                    tally.AddValue(value);
-                }
-                else
-                {
-                    try
+                    // TODO: Replace this mess completely
+                    var targetValue = rangeValues[i];
+                    if (CalcEngineHelpers.ValueSatisfiesCriteria(targetValue, criteria, ce))
                     {
                         if (!sumRangeEnumerator.MoveNext())
                             break;
+                        var value = sumRangeEnumerator.Current!;
+                        tally.AddValue(value);
                     }
-                    catch (GettingDataException)
+                    else
                     {
-                        // The referenced cell uses a dirty formula, but we are not using the value, so eat the exception.
+                        try
+                        {
+                            if (!sumRangeEnumerator.MoveNext())
+                                break;
+                        }
+                        catch (GettingDataException)
+                        {
+                            // The referenced cell uses a dirty formula, but we are not using the value, so eat the exception.
+                        }
                     }
                 }
             }

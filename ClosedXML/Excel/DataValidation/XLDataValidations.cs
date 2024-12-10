@@ -58,10 +58,13 @@ namespace ClosedXML.Excel
             dataValidationsToRemove.ForEach(Delete);
         }
 
-        public void Delete(IXLDataValidation dataValidation)
+        public void Delete(IXLDataValidation? dataValidation)
         {
-            if (!_dataValidations.Remove(dataValidation))
+            if (null == dataValidation || !_dataValidations.Remove(dataValidation))
+            {
                 return;
+            }
+
             var xlDataValidation = (XLDataValidation) dataValidation;
             xlDataValidation.RangeAdded -= OnRangeAdded;
             xlDataValidation.RangeRemoved -= OnRangeRemoved;
@@ -87,7 +90,7 @@ namespace ClosedXML.Excel
         /// <summary>
         /// Get all data validation rules applied to ranges that intersect the specified range.
         /// </summary>
-        public IEnumerable<IXLDataValidation> GetAllInRange(IXLRangeAddress rangeAddress)
+        public IEnumerable<IXLDataValidation?> GetAllInRange(IXLRangeAddress rangeAddress)
         {
             if (rangeAddress == null || !rangeAddress.IsValid)
                 return Enumerable.Empty<IXLDataValidation>();
@@ -207,17 +210,17 @@ namespace ClosedXML.Excel
             }
         }
 
-        private void OnRangeAdded(object sender, RangeEventArgs e)
+        private void OnRangeAdded(object? sender, RangeEventArgs e)
         {
-            ProcessRangeAdded(e.Range, (XLDataValidation) sender, skipIntersectionCheck: false);
+            ProcessRangeAdded(e.Range, (XLDataValidation?) sender, skipIntersectionCheck: false);
         }
 
-        private void OnRangeRemoved(object sender, RangeEventArgs e)
+        private void OnRangeRemoved(object? sender, RangeEventArgs e)
         {
             ProcessRangeRemoved(e.Range);
         }
 
-        private void ProcessRangeAdded(IXLRange range, XLDataValidation dataValidation, bool skipIntersectionCheck)
+        private void ProcessRangeAdded(IXLRange range, XLDataValidation? dataValidation, bool skipIntersectionCheck)
         {
             if (!skipIntersectionCheck)
             {
@@ -247,7 +250,7 @@ namespace ClosedXML.Excel
 
                 foreach (var entry in entries)
                 {
-                    entry.DataValidation.SplitBy(rangeAddress);
+                    entry.DataValidation?.SplitBy(rangeAddress);
                 }
             }
             finally
@@ -263,13 +266,13 @@ namespace ClosedXML.Excel
         /// </summary>
         private class XLDataValidationIndexEntry : IXLAddressable
         {
-            public XLDataValidationIndexEntry(IXLRangeAddress rangeAddress, XLDataValidation dataValidation)
+            public XLDataValidationIndexEntry(IXLRangeAddress rangeAddress, XLDataValidation? dataValidation)
             {
                 RangeAddress = rangeAddress;
                 DataValidation = dataValidation;
             }
 
-            public XLDataValidation DataValidation { get; }
+            public XLDataValidation? DataValidation { get; }
 
             /// <summary>
             ///   Gets an object with the boundaries of this range.

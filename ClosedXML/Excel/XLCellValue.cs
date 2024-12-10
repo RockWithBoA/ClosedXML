@@ -261,9 +261,7 @@ namespace ClosedXML.Excel
             // AutoFilter custom filter operand can be stored as `1 1/2` and Excel correctly
             // interprets it as a `1.5`. Same for 2015-01-01, therefore use `TextToNumber` that
             // should deal with any weird formats.
-            if (text is null)
-                return Blank.Value;
-            if (text == String.Empty)
+            if (String.IsNullOrEmpty(text))
                 return Blank.Value;
             if (StringComparer.OrdinalIgnoreCase.Equals("TRUE", text))
                 return true;

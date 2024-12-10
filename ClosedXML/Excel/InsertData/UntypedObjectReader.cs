@@ -50,7 +50,7 @@ namespace ClosedXML.Excel.InsertData
                 if (itemType == null)
                     return new NullDataReader(itemsOfSameType);
 
-                var items = Array.CreateInstance(itemType, itemsOfSameType.Count);
+                object[] items = new object[itemsOfSameType.Count];
                 Array.Copy(itemsOfSameType.ToArray(), items, items.Length);
 
                 return InsertDataReaderFactory.Instance.CreateReader(items);
